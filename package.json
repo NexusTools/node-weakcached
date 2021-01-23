@@ -1,0 +1,27 @@
+{
+  "name": "@nexustools/weakcached",
+  "description": "Extension of Promise which exposes resolve/reject methods and makes the executor optional.",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --bail --reporter spec test/",
+    "test-coverage": "nyc --reporter=lcov --reporter=text-summary npm test"
+  },
+  "types": "index.d.ts",
+  "author": "NexusTools <contact@nexustools.com>",
+  "contributors": [
+    "Katelyn Slater <kate@nexustools.com"
+  ],
+  "repository": "github:NexusTools/node-promised",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@nexustools/promised": "^1.0.0"
+  },
+  "devDependencies": {
+    "source-map-support": "^0.5.19",
+    "@types/node": "^14.14.10",
+    "@types/mocha": "^8.0.4",
+    "mocha": "^8.2.1",
+    "nyc": "^15.1.0"
+  }
+}

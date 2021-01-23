@@ -1,0 +1,17 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+      "target": "ES6",
+      "declaration": true,
+      "module": "commonjs",
+      "preserveConstEnums": true,
+      "moduleResolution": "node",
+      "sourceMap": true
+    },
+    "include": [
+        "index.ts",
+        "src/*.ts",
+        "test/tests.ts",
+        "test/**/*.ts"
+    ]
+}
