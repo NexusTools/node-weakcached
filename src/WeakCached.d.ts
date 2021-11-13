@@ -31,6 +31,9 @@ interface Options<V extends object, A> {
      */
     timeout?: number;
 }
+/**
+ * Configurable weakly cached node.
+ **/
 export declare class WeakCached<V extends object, A> {
     /**
      * Whether or not the JavaScript runtime supports WeakRefs
@@ -46,10 +49,28 @@ export declare class WeakCached<V extends object, A> {
     static readonly DefaultLifetime = 300;
     constructor(options?: Options<V, A>);
     constructor(executor: Generator<V, A>, arg?: A);
+    /**
+     * Generate a value.
+     **/
     generate(arg?: A): CancelPromised<V>;
     generate(executor: Generator<V, A>, arg?: A): CancelPromised<V>;
+    /**
+     * Set the internal value.
+     *
+     * @param value The value to use
+     * @param lifetime Optionally a lifetime for this value
+     **/
     set(value: V | PromiseLike<V> | Error, lifetime?: number): void;
-    get(onresult: (err: Error, value?: V) => void): CancelPromised<V> | void;
+    /**
+     * Gets the internal value.
+     *
+     * @param value The value to use
+     * @param lifetime Optionally a lifetime for this value
+     **/
+    get(): V | CancelPromised<V> | Error | void;
+    /**
+     * Expire the value.
+     **/
     expire(): this;
     private arg;
     private timeout;

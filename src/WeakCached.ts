@@ -52,6 +52,9 @@ const DefaultGenerator = function() {
   throw new Error("No default generator passed in WeakCached constructor");
 }
 
+/**
+ * Configurable weakly cached node.
+ **/
 export class WeakCached<V extends object, A> {
   /**
    * Whether or not the JavaScript runtime supports WeakRefs
@@ -100,6 +103,9 @@ export class WeakCached<V extends object, A> {
     }
   }
 
+  /**
+   * Generate a value.
+   **/
   generate(arg?: A): CancelPromised<V>;
   generate(executor: Generator<V, A>, arg?: A): CancelPromised<V>;
   generate(...args: any[]): CancelPromised<V>{
@@ -191,6 +197,12 @@ export class WeakCached<V extends object, A> {
     return undefined;
   }
 
+  /**
+   * Set the internal value.
+   *
+   * @param value The value to use
+   * @param lifetime Optionally a lifetime for this value
+   **/
   set(value: V | PromiseLike<V> | Error, lifetime?: number) {
     try{clearTimeout(this.expires)}catch(e){}
 
@@ -235,29 +247,27 @@ export class WeakCached<V extends object, A> {
 
     this.raw = value as any;
   }
-  get(onresult: (err: Error, value?: V) => void): CancelPromised<V> | void{
+
+  /**
+   * Gets the internal value.
+   *
+   * @param value The value to use
+   * @param lifetime Optionally a lifetime for this value
+   **/
+  get(): V | CancelPromised<V> | Error | void{
     let raw = this.raw;
     if(raw instanceof ref) raw = raw.deref();
     if(raw === void 0 || raw === null) {
-      const cancel = this.generate();
-      if(cancel) {
-        cancel.then(onresult.bind(null, null), onresult);
-        return cancel;
-      }
-
-      return this.get(onresult);
+      this.generate();
+      return this.raw;
     }
 
-    if(typeof raw === "function") {
-      const cancel = raw as CancelPromised<V>;
-      cancel.then(onresult.bind(null, null), onresult);
-      return cancel;
-    } else if(raw instanceof Error)
-      onresult(raw);
-    else
-      onresult(null, raw);
+    return raw;
   }
 
+  /**
+   * Expire the value.
+   **/
   expire(): this{
     this.set(undefined);
     return this;

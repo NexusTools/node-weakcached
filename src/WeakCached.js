@@ -10,6 +10,9 @@ const deref = supportsWeakRef ? (val) => val instanceof ref ? val.deref() : val 
 const DefaultGenerator = function () {
     throw new Error("No default generator passed in WeakCached constructor");
 };
+/**
+ * Configurable weakly cached node.
+ **/
 class WeakCached {
     constructor(...args) {
         switch (args.length) {
@@ -134,6 +137,12 @@ class WeakCached {
         }
         return undefined;
     }
+    /**
+     * Set the internal value.
+     *
+     * @param value The value to use
+     * @param lifetime Optionally a lifetime for this value
+     **/
     set(value, lifetime) {
         var _a;
         try {
@@ -181,28 +190,25 @@ class WeakCached {
             this.expires = setTimeout(() => this.expire(), lifetime || this.lifetime).unref();
         this.raw = value;
     }
-    get(onresult) {
+    /**
+     * Gets the internal value.
+     *
+     * @param value The value to use
+     * @param lifetime Optionally a lifetime for this value
+     **/
+    get() {
         let raw = this.raw;
         if (raw instanceof ref)
             raw = raw.deref();
         if (raw === void 0 || raw === null) {
-            const cancel = this.generate();
-            if (cancel) {
-                cancel.then(onresult.bind(null, null), onresult);
-                return cancel;
-            }
-            return this.get(onresult);
+            this.generate();
+            return this.raw;
         }
-        if (typeof raw === "function") {
-            const cancel = raw;
-            cancel.then(onresult.bind(null, null), onresult);
-            return cancel;
-        }
-        else if (raw instanceof Error)
-            onresult(raw);
-        else
-            onresult(null, raw);
+        return raw;
     }
+    /**
+     * Expire the value.
+     **/
     expire() {
         this.set(undefined);
         return this;
